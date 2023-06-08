@@ -23,7 +23,7 @@ public class UsersService {
 		usersRepo.findByEmail(u.getEmail()).ifPresent(user -> {
 			throw new BadRequestException("Email " + user.getEmail() + " already in use!");
 		});
-		User newUser = new User(u.getName(), u.getSurname(), u.getEmail());
+		User newUser = new User(u.getName(), u.getSurname(), u.getEmail(), u.getPassword());
 		return usersRepo.save(newUser);
 	}
 
@@ -39,6 +39,10 @@ public class UsersService {
 
 	public User findById(UUID id) throws NotFoundException {
 		return usersRepo.findById(id).orElseThrow(() -> new NotFoundException());
+	}
+
+	public User findByEmail(String email) throws NotFoundException {
+		return usersRepo.findByEmail(email).orElseThrow(() -> new NotFoundException());
 	}
 
 	public User findByIdAndUpdate(UUID id, User u) throws NotFoundException {
