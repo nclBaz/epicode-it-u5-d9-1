@@ -33,6 +33,14 @@ public class ExceptionsHandler {
 		return new ResponseEntity<ErrorsPayload>(payload, HttpStatus.BAD_REQUEST);
 	}
 
+	@ExceptionHandler(UnauthorizedException.class)
+	public ResponseEntity<ErrorsPayload> handleUnauthorized(UnauthorizedException e) {
+
+		ErrorsPayload payload = new ErrorsPayload(e.getMessage(), new Date(), 401);
+
+		return new ResponseEntity<ErrorsPayload>(payload, HttpStatus.UNAUTHORIZED);
+	}
+
 	@ExceptionHandler(NotFoundException.class)
 	public ResponseEntity<ErrorsPayload> handleNotFound(NotFoundException e) {
 

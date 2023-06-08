@@ -5,8 +5,11 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
+import riccardogulin.u5d9.exceptions.UnauthorizedException;
 import riccardogulin.u5d9.users.User;
 
 @Component
@@ -34,7 +37,21 @@ public class JWTTools {
 		return token;
 	}
 
-	static public boolean isTokenValid(String token) {
-		return true;
+	static public void isTokenValid(String token) {
+		try {
+			Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secret.getBytes())).build().parse(token);
+
+		} catch (MalformedJwtException e) {
+			throw new UnauthorizedException("Il token non è valido");
+		} catch (ExpiredJwtException e) {
+			throw new UnauthorizedException("Il token è scaduto");
+		} catch (Exception e) {
+			throw new UnauthorizedException("Problemi col token, per favore effettua di nuovo il login");
+		}
+	}
+
+	static public String extractSubject(String token) { // Nel nostro caso il subject è l'email dell'utente
+		return Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secret.getBytes())).build().parseClaimsJws(token)
+				.getBody().getSubject();
 	}
 }

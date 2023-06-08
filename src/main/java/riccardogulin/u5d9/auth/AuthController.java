@@ -31,7 +31,7 @@ public class AuthController {
 	}
 	
 	@PostMapping("/login")
-	public ResponseEntity<AuthenticationSuccessfullPayload> login(@RequestBody @Validated UserLoginPayload body)
+	public ResponseEntity<AuthenticationSuccessfullPayload> login(@RequestBody UserLoginPayload body)
 			throws NotFoundException {
 
 		// 1. Verificare che l'email dell'utente sia presente nel db
