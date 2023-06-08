@@ -8,6 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -21,6 +23,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "users")
 @Data
 @NoArgsConstructor
+@JsonIgnoreProperties({ "id", "password", "authorities", "accountNonLocked", "credentialsNonExpired",
+		"accountNonExpired" })
 public class User implements UserDetails {
 	@Id
 	@GeneratedValue
@@ -32,6 +36,11 @@ public class User implements UserDetails {
 	@Enumerated(EnumType.STRING)
 	private Role role;
 
+	private boolean isEnabled;
+	private boolean isCredentialsNonExpired;
+	private boolean isAccountNonExpired;
+	private boolean isAccountNonLocked;
+
 	public User(String name, String surname, String email, String password) {
 		super();
 		this.name = name;
@@ -39,6 +48,10 @@ public class User implements UserDetails {
 		this.email = email;
 		this.password = password;
 		this.role = Role.USER;
+		this.isEnabled = true;
+		this.isAccountNonExpired = true;
+		this.isCredentialsNonExpired = true;
+		this.isAccountNonLocked = true;
 	}
 
 	@Override
@@ -49,32 +62,28 @@ public class User implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		// TODO Auto-generated method stub
 		return this.email;
 	}
 
 	@Override
 	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.isAccountNonExpired;
 	}
 
 	@Override
 	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.isAccountNonLocked;
 	}
 
 	@Override
 	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.isCredentialsNonExpired;
 	}
 
 	@Override
 	public boolean isEnabled() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.isEnabled;
 	}
+
 
 }

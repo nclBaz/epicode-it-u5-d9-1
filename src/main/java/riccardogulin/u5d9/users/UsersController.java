@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +37,11 @@ public class UsersController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public User saveUser(@RequestBody @Validated UserRegistrationPayload body) {
 		return usersService.create(body);
+	}
+
+	@GetMapping("/me")
+	public User getProfile(@AuthenticationPrincipal User user) throws Exception {
+		return user;
 	}
 
 	@GetMapping("/{userId}")

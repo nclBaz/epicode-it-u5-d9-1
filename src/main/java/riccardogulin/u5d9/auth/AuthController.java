@@ -23,6 +23,8 @@ public class AuthController {
 
 	@Autowired
 	UsersService usersService;
+//	@Autowired
+//	AuthenticationManager authenticationManager;
 
 	@PostMapping("/register")
 	public ResponseEntity<User> register(@RequestBody @Validated UserRegistrationPayload body) {
@@ -34,13 +36,22 @@ public class AuthController {
 	public ResponseEntity<AuthenticationSuccessfullPayload> login(@RequestBody UserLoginPayload body)
 			throws NotFoundException {
 
-		// 1. Verificare che l'email dell'utente sia presente nel db
+		// TODO: Check se si può usare direttamente l'authentication manager qua al
+		// posto di fare in maniera manuale (PROBABILMENTE SI MA DEVO DEFINIRE UN BEAN
+		// APPOSITO
+//
+//		Authentication auth = authenticationManager
+//				.authenticate(new UsernamePasswordAuthenticationToken(body.getEmail(), body.getPassword()));
+
+//		System.out.println(auth);
+//
+//		// 1. Verificare che l'email dell'utente sia presente nel db
 		User user = usersService.findByEmail(body.getEmail());
-		// 2. In caso affermativo devo verificare che la pw corrisponda a quella trovata
-		// nel db
+//		// 2. In caso affermativo devo verificare che la pw corrisponda a quella trovata
+//		// nel db
 		if (!body.getPassword().matches(user.getPassword()))
 			throw new UnauthorizedException("Credenziali non valide");
-		// 3. Se tutto ok --> genero 
+//		// 3. Se tutto ok --> genero il token
 		String token = JWTTools.createToken(user);
 		// 4. Altrimenti --> 401 ("Credenziali non valide")
 

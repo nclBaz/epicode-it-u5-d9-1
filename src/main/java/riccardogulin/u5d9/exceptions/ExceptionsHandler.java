@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -40,6 +41,14 @@ public class ExceptionsHandler {
 
 		return new ResponseEntity<ErrorsPayload>(payload, HttpStatus.UNAUTHORIZED);
 	}
+	
+	@ExceptionHandler(ForbiddenException.class)
+	public ResponseEntity<ErrorsPayload> handleAuthenticationException(ForbiddenException e) {
+		ErrorsPayload payload = new ErrorsPayload(e.getMessage(), new Date(), 403);
+
+		return new ResponseEntity<ErrorsPayload>(payload, HttpStatus.FORBIDDEN);
+	}
+
 
 	@ExceptionHandler(NotFoundException.class)
 	public ResponseEntity<ErrorsPayload> handleNotFound(NotFoundException e) {
@@ -51,7 +60,8 @@ public class ExceptionsHandler {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorsPayload> handleGeneric(Exception e) {
-		System.out.println(e);
+
+		e.printStackTrace();
 		ErrorsPayload payload = new ErrorsPayload("Errore Generico", new Date(), 500);
 
 		return new ResponseEntity<ErrorsPayload>(payload, HttpStatus.INTERNAL_SERVER_ERROR);

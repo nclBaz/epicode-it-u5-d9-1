@@ -53,6 +53,8 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 				user.getAuthorities());
 		authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
+		System.out.println(authToken);
+
 		SecurityContextHolder.getContext().setAuthentication(authToken);
 
 		// 3.2 puoi procedere al prossimo blocco della filterChain
