@@ -4,18 +4,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -24,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties({ "id", "password", "authorities", "accountNonLocked", "credentialsNonExpired",
-		"accountNonExpired" })
+		"accountNonExpired", "creditCard" })
 public class User implements UserDetails {
 	@Id
 	@GeneratedValue
@@ -33,6 +28,10 @@ public class User implements UserDetails {
 	private String surname;
 	private String email;
 	private String password;
+
+	@Convert(converter = CreditCardConverter.class)
+	private String creditCard; // Fai esempio con pin aziendale
+
 	@Enumerated(EnumType.STRING)
 	private Role role;
 

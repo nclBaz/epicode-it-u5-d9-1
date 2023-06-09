@@ -4,11 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import riccardogulin.u5d9.auth.payloads.AuthenticationSuccessfullPayload;
 import riccardogulin.u5d9.exceptions.UnauthorizedException;
@@ -19,19 +17,22 @@ import riccardogulin.u5d9.users.payloads.UserRegistrationPayload;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin
 public class AuthController {
 
 	@Autowired
 	UsersService usersService;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 //	@Autowired
 //	AuthenticationManager authenticationManager;
 
 	@PostMapping("/register")
 	public ResponseEntity<User> register(@RequestBody @Validated UserRegistrationPayload body) {
+		body.setPassword(passwordEncoder.encode(body.getPassword()));
 		User createdUser = usersService.create(body);
 		return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
 	}
-	
 	@PostMapping("/login")
 	public ResponseEntity<AuthenticationSuccessfullPayload> login(@RequestBody UserLoginPayload body)
 			throws NotFoundException {
@@ -49,8 +50,14 @@ public class AuthController {
 		User user = usersService.findByEmail(body.getEmail());
 //		// 2. In caso affermativo devo verificare che la pw corrisponda a quella trovata
 //		// nel db
-		if (!body.getPassword().matches(user.getPassword()))
-			throw new UnauthorizedException("Credenziali non valide");
+
+		boolean isPWOk = passwordEncoder.matches(body.getPassword(), user.getPassword());
+
+		if(!isPWOk) throw new UnauthorizedException("PW NO BUONA");
+
+
+//		if (!body.getPassword().matches(user.getPassword()))
+//			throw new UnauthorizedException("Credenziali non valide");
 //		// 3. Se tutto ok --> genero il token
 		String token = JWTTools.createToken(user);
 		// 4. Altrimenti --> 401 ("Credenziali non valide")

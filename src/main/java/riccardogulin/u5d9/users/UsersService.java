@@ -24,6 +24,7 @@ public class UsersService {
 			throw new BadRequestException("Email " + user.getEmail() + " already in use!");
 		});
 		User newUser = new User(u.getName(), u.getSurname(), u.getEmail(), u.getPassword());
+		newUser.setCreditCard(u.getCreditCard());
 		return usersRepo.save(newUser);
 	}
 
