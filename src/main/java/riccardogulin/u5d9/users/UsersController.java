@@ -29,7 +29,8 @@ public class UsersController {
 
 	@GetMapping("")
 	public Page<User> getUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
-			@RequestParam(defaultValue = "id") String sortBy) {
+			@RequestParam(defaultValue = "id") String sortBy, @RequestParam(required = false) String creditCard) {
+		if(creditCard != null) return usersService.findByCreditCard(creditCard);
 		return usersService.find(page, size, sortBy);
 	}
 

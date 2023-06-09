@@ -27,7 +27,14 @@ public class CreditCardConverter implements AttributeConverter<String, String> {
     }
 
     @Override
-    public String convertToEntityAttribute(String s) {
-       return "CIAO";
+    public String convertToEntityAttribute(String encrypted) {
+        Key key = new SecretKeySpec(KEY, "AES");
+        try {
+            Cipher c = Cipher.getInstance(ALGORITHM);
+            c.init(Cipher.DECRYPT_MODE, key);
+            return new String(c.doFinal(Base64.getDecoder().decode(encrypted)));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

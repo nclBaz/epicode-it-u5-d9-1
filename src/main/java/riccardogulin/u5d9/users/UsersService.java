@@ -62,4 +62,8 @@ public class UsersService {
 		usersRepo.delete(found);
 	}
 
+	public Page<User> findByCreditCard(String creditCard) {
+		Pageable pageable = PageRequest.of(0, 1, Sort.by("name"));
+		return usersRepo.findByCreditCardContainsIgnoreCase(creditCard, pageable);
+	}
 }
